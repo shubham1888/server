@@ -1,6 +1,6 @@
 const PouchDB = require('pouchdb');
 
-const db = new PouchDB('mydb');
+const db = new PouchDB('dailylogs');
 
 // Create a new document
 const createDocument = async (doc) => {
@@ -18,7 +18,8 @@ const getDocumentById = async (id) => {
         const result = await db.get(id);
         return result;
     } catch (error) {
-        throw new Error(error.message);
+        console.log(error)
+        return []
     }
 };
 

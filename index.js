@@ -1,56 +1,27 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const PouchDB = require('pouchdb');
+require("dotenv").config()
+const express = require("express")
+const app = express()
 
-const app = express();
-const db = new PouchDB('mydb');
+app.use(cors());
 
-app.use(bodyParser.json());
+// Parse JSON-encoded request bodies
+app.use(express.json());
 
-// Create a new document
-app.post('/api/documents', async (req, res) => {
-    try {
-        const result = await db.post(req.body);
-        res.json(result);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+// Parse URL-encoded request bodies
+app.use(express.urlencoded({ extended: true }));
+
+
+const PORT = process.env.PORT || 3000
+
+const dailylogroute = require("./router/dailylog");
+
+app.get("/", (req, res) => {
+    res.send("Hello from shubham's server");
 });
 
-// Get a document by ID
-app.get('/api/documents/:id', async (req, res) => {
-    try {
-        const result = await db.get(req.params.id);
-        res.json(result);
-    } catch (error) {
-        res.status(404).json({ error: error.message });
-    }
-});
+// middleware or to set router
+app.use("/api/dailylog", dailylogroute);
 
-// Update a document by ID
-app.put('/api/documents/:id', async (req, res) => {
-    try {
-        const doc = await db.get(req.params.id);
-        const updatedDoc = Object.assign({}, doc, req.body);
-        const result = await db.put(updatedDoc);
-        res.json(result);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// Delete a document by ID
-app.delete('/api/documents/:id', async (req, res) => {
-    try {
-        const doc = await db.get(req.params.id);
-        const result = await db.remove(doc);
-        res.json(result);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// Start the server
 app.listen(3000, () => {
-    console.log('Server started on port 3000');
+    console.log(`Server listening on port ${PORT}`);
 });
